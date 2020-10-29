@@ -19,6 +19,12 @@ python mydemo.py
 
 1. [OPTION] Please donwload these images https://drive.google.com/drive/folders/1KU6bBvjYIDDJh-ry8t5BOKlthchFD7G1?usp=sharing and put it in <b>demo/</b>
 
+
+# Visualize detection results using DetVisGUI provided by <a href="https://github.com/Chien-Hung/DetVisGUI">Chien-Hung</a>
+
+<img src="demo/Screenshot from 2020-10-29 17-12-44.png" height= 300px>
+
+
 # Results
 see <b>myoutput</b> for more details.
 
@@ -38,6 +44,10 @@ see <b>myoutput</b> for more details.
  </tr>
 </table>
 
+
+
+
+git push origin cvpr3k
 
 
 
