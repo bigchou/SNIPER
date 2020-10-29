@@ -22,7 +22,7 @@ python mydemo.py
 
 # Visualize detection results using DetVisGUI provided by <a href="https://github.com/Chien-Hung/DetVisGUI">Chien-Hung</a>
 
-<img src="demo/Screenshot from 2020-10-29 17-12-44.png" height= 300px>
+<img src="demo/snapshot.jpg" height= 300px>
 
 
 # Results
