@@ -47,10 +47,11 @@ see <b>myoutput</b> for more details.
 
 
 
-git push origin cvpr3k
+# Note.
 
+[1] Remember to do <b>git push origin cvpr3k</b>
 
-
+[2] Extract files using <b>cat yahoo.part* | tar zxvf -</b>
 
 
 
