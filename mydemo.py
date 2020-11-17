@@ -28,8 +28,8 @@ import PIL.Image
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Demo')
-    parser.add_argument('--inputdir', default='./demo/Pictures/')#'./demo/input_imgs/'#'./demo/mytake/'
-    parser.add_argument('--outputdir',default='./Picturestest/')#'./myoutput/'#'./mytaketest/'
+    parser.add_argument('--inputdir', default='./demo/products-pchome/')#'./demo/input_imgs/'#'./demo/mytake/'
+    parser.add_argument('--outputdir',default='./products-pchome/')#'./myoutput/'#'./mytaketest/'
     parser.add_argument('--batchsize',default=1000,type=int)
     args = parser.parse_args()
     return args
@@ -66,7 +66,7 @@ def batch_proc(sym,image_names_full):
         im_height, im_width, im_channel = im.shape # (4096,2304,3)
         im, im_scale = resize(im, target_size, max_size, stride=config.network.RPN_FEAT_STRIDE)
         small_height, small_width, small_channel = im.shape
-        expand_ratio_list.append([im_height/small_height,im_width/small_width])
+        expand_ratio_list.append([float(im_height)/float(small_height),float(im_width)/float(small_width)])
         im_list.append(im)
         im_tensor = transform(im, config.network.PIXEL_MEANS)
         im_info = np.array([[im_tensor.shape[2], im_tensor.shape[3], im_scale]], dtype=np.float32)
