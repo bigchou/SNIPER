@@ -53,7 +53,7 @@ see <b>myoutput</b> for more details.
 
 [2] Extract files using <b>cat yahoo.part* | tar zxvf -</b>
 
-
+[3] zip -r -qq pchomefcncrop.zip products-pchome products-pchome.json
 
 
 # SNIPER / AutoFocus: Efficient Multi-Scale Training / Inference

@@ -28,8 +28,8 @@ import PIL.Image
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Demo')
-    parser.add_argument('--inputdir', default='./demo/products-yahoo/')#'./demo/input_imgs/'
-    parser.add_argument('--outputdir',default='./products-yahoo/')#'./myoutput/'
+    parser.add_argument('--inputdir', default='./demo/Pictures/')#'./demo/input_imgs/'#'./demo/mytake/'
+    parser.add_argument('--outputdir',default='./Picturestest/')#'./myoutput/'#'./mytaketest/'
     parser.add_argument('--batchsize',default=1000,type=int)
     args = parser.parse_args()
     return args
@@ -46,10 +46,12 @@ def process_mul_scores(scores, xcls_scores):
 
 def batch_proc(sym,image_names_full):
     # load raw data(image)
+    expand_ratio_list = []
     data = []
     im_list = []
     im_info_list = []
     for im_name in image_names_full:
+        print(im_name)
         #https://stackoverflow.com/questions/50898034/how-replace-transparent-with-a-color-in-pillow
         im = PIL.Image.open(im_name)
         if im.mode == "RGB":
@@ -60,9 +62,11 @@ def batch_proc(sym,image_names_full):
             new_canvas.paste(im, (0,0), im)
             im = cv2.cvtColor(np.array(new_canvas), cv2.COLOR_RGB2BGR)
         #===========================================================================================
-
         target_size, max_size = config.TEST.SCALES[0][0], config.TEST.SCALES[0][1]
+        im_height, im_width, im_channel = im.shape # (4096,2304,3)
         im, im_scale = resize(im, target_size, max_size, stride=config.network.RPN_FEAT_STRIDE)
+        small_height, small_width, small_channel = im.shape
+        expand_ratio_list.append([im_height/small_height,im_width/small_width])
         im_list.append(im)
         im_tensor = transform(im, config.network.PIXEL_MEANS)
         im_info = np.array([[im_tensor.shape[2], im_tensor.shape[3], im_scale]], dtype=np.float32)
@@ -113,6 +117,7 @@ def batch_proc(sym,image_names_full):
     # get eval data based on the train val split
     count = 0
     total = len(eval_data)
+    #bp()
     for idx in range(len(eval_data)):
         count += 1
         data_batch = mx.io.DataBatch(data=[eval_data[idx]], label=[], pad=0, index=idx,
@@ -146,17 +151,33 @@ def batch_proc(sym,image_names_full):
         x1, y1, x2, y2 = boxes * scale
         #print('testing {}'.format(im_name))
         im = eval_im_list[idx]
-
-        # draw boudning box
+        # ============================================================
+        # ************************************************************
+        # load image with original size
+        ori_im = PIL.Image.open(im_name)
+        if ori_im.mode == "RGB":
+            ori_im = cv2.imread(im_name, cv2.IMREAD_COLOR)
+        else:
+            ori_im = ori_im.convert("RGBA")
+            new_canvas = PIL.Image.new("RGB",ori_im.size,"WHITE")
+            new_canvas.paste(ori_im, (0,0), ori_im)
+            ori_im = cv2.cvtColor(np.array(new_canvas), cv2.COLOR_RGB2BGR)
+        im = ori_im
+        x1 *= expand_ratio_list[idx][1]
+        x2 *= expand_ratio_list[idx][1]
+        y1 *= expand_ratio_list[idx][0]
+        y2 *= expand_ratio_list[idx][0]
+        # ************************************************************
+        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
         #print("image size:",im.shape)
         #print("bounding box info:",x1,y1,x2,y2)
-        #cv2.rectangle(im, (x1, y1), (x2, y2), (255,0,0), 2)
+
+        # draw boudning box
+        #cv2.rectangle(im, (x1, y1), (x2, y2), (255,0,0), 5)#thickness=5
 
         # image cropping
-        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-        #print(x1,x2,y1,y2)#(119, 423, 173, 511)
         im = im[y1:y2,x1:x2]
-
+        # ============================================================
         # save
         if not os.path.exists(args.outputdir):
             os.mkdir(args.outputdir)
