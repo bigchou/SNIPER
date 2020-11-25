@@ -11,8 +11,16 @@ see https://docs.google.com/document/d/1MutrvFh9y3RMx4yuUDfN2pjTOvVt7deckndP-Ym1
 
 # Execution
 
+### make dataset
+
 ~~~~
 python mydemo.py
+~~~~
+
+### predict real-shot images
+
+~~~~
+python run.py --mode draw --topk 5
 ~~~~
 
 #### Note.
